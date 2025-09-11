@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "550098372106",
+    "project_id": "hoildaysandevents",
+    "storage_bucket": "hoildaysandevents.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550098372106:android:a2022f2e41b509697581f3",
+        "android_client_info": {
+          "package_name": "com.holidaysandevents"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550098372106-ijn41t4gbedtju8ddbf2cjos2c80hqc9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.holidaysandevents",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "550098372106-it6t4meuoggpqsq6nov7be8fk3d0ch94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjuKET2Q3QUi2-dlDfzIJtT81n80-Fh1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550098372106-it6t4meuoggpqsq6nov7be8fk3d0ch94.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
