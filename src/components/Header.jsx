@@ -1,139 +1,193 @@
+// src/components/Header.jsx
 import { StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
 
 const Header = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    loadUserInfo();
+  }, []);
+
+  const loadUserInfo = async () => {
+    try {
+      const storedUserInfo = await AsyncStorage.getItem('userInfo');
+      if (storedUserInfo) {
+        setUserInfo(JSON.parse(storedUserInfo));
+      }
+    } catch (error) {
+      console.error('Error loading user info:', error);
+    }
+  };
 
   const onHandlePress = () => {
     setModalVisible(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setModalVisible(false);
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => {
-            // Add your logout logic here
-            console.log('User logged out');
-            // You can add navigation to login screen or clear tokens here
-          },
-        },
-      ]
-    );
+    try {
+      // Sign out from Google
+      await GoogleSignin.signOut();
+      
+      // Clear stored user data
+      await AsyncStorage.multiRemove(['userInfo', 'accessToken']);
+      
+      // Navigate to login screen
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LoginScreen' }],
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      Alert.alert('Error', 'Failed to logout. Please try again.');
+    }
   };
 
   const closeModal = () => {
     setModalVisible(false);
   };
+
   return (
     <SafeAreaView>
-        <View style={styles.headerContainer}>
-      <Text style={styles.header}>My CALENDAR</Text>
-      <TouchableOpacity onPress={onHandlePress}>
-        <MaterialIcons name="account-circle" size={60} color="dark" />
-      </TouchableOpacity>
-
-      
-    </View>
-    <View style={styles.line} />
-    
-    {/* Modal for user options */}
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={closeModal}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Account Options</Text>
-          
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <MaterialIcons name="logout" size={24} color="#fff" />
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
+      <View style={styles.headerContainer}>
+        <View style={styles.titleContainer}>
+          <MaterialIcons name="calendar-month" size={28} color="#A16A4D" />
+          <Text style={styles.header}>MY CALENDAR</Text>
         </View>
+        
+        <TouchableOpacity onPress={onHandlePress} style={styles.profileButton}>
+          <MaterialIcons name="account-circle" size={32} color="#A16A4D" />
+        </TouchableOpacity>
       </View>
-    </Modal>
+      
+      <View style={styles.line} />
+      
+      {/* Modal for user options */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <MaterialIcons name="account-circle" size={60} color="#A16A4D" />
+              <View style={styles.userInfo}>
+                <Text style={styles.userName}>
+                  {userInfo?.name || 'User'}
+                </Text>
+                <Text style={styles.userEmail}>
+                  {userInfo?.email || 'user@example.com'}
+                </Text>
+              </View>
+            </View>
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                <MaterialIcons name="logout" size={20} color="#fff" />
+                <Text style={styles.logoutText}>Logout</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
-    
   )
 }
 
 export default Header
 
 const styles = StyleSheet.create({
-  headerContainer:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-   
-    padding:10,
-    borderRadius:10
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#1B1024',
   },
-  header:{
-    fontSize:24,
-    color:'dark',
-    paddingVertical:10,
-    marginLeft:10
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  header: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginLeft: 8,
+    letterSpacing: 0.5,
+  },
+  profileButton: {
+    padding: 5,
   },
   line: {
-    height: 1,
-    backgroundColor: '#eb6565ff',
-    marginHorizontal: 10,
-    marginTop: 5,
+    height: 2,
+    backgroundColor: '#A16A4D',
+    marginHorizontal: 20,
+    opacity: 0.3,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(15, 5, 24, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 20,
+    backgroundColor: '#1B1024',
+    borderRadius: 20,
+    padding: 25,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    minWidth: 250,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+    minWidth: 300,
   },
-  modalTitle: {
-    fontSize: 18,
+  modalHeader: {
+    alignItems: 'center',
+    marginBottom: 25,
+  },
+  userInfo: {
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  userName: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    color: '#ffffff',
+    marginBottom: 5,
+  },
+  userEmail: {
+    fontSize: 14,
+    color: '#3B373E',
+  },
+  modalButtons: {
+    width: '100%',
+    gap: 10,
   },
   logoutButton: {
-    backgroundColor: '#eb6565ff',
+    backgroundColor: '#A16A4D',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 10,
-    minWidth: 150,
     justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 12,
+    elevation: 2,
   },
   logoutText: {
     color: '#fff',
@@ -142,11 +196,16 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    alignItems: 'center',
   },
   cancelText: {
     color: '#666',
     fontSize: 16,
+    fontWeight: '500',
   },
 })

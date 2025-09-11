@@ -1,17 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React,{useEffect} from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import LottieView from 'lottie-react-native';
 
 const SplashScreen = ({navigation}) => {
 useEffect(()=>{
     setTimeout(()=>{
         navigation.replace('LoginScreen')
-    },2000)
+    },3000)
 },[])
   return (
     <View style={styles.container}>
-      <MaterialIcons name="calendar-month" size={120} color="white" />
-      <Text style={styles.text}>CALENDAR</Text>
+      
+       <LottieView source={require('../assets/animations/booked.json')} autoPlay loop style={{ width: 200, height: 200 }} />
     </View>
   );
 };
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000000',
+    backgroundColor: '#1B1024',
   },
   text: {
     fontSize: 34,
