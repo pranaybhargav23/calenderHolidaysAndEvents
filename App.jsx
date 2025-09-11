@@ -7,7 +7,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 function App() {
   GoogleSignin.configure({
   webClientId: '550098372106-it6t4meuoggpqsq6nov7be8fk3d0ch94.apps.googleusercontent.com',
-
+  scopes: ['email','https://www.googleapis.com/auth/calendar'],
 });
   return (
     <SafeAreaProvider style={styles.container}>
