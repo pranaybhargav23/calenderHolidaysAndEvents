@@ -48,6 +48,14 @@ const DraggableEventChip = ({
     }
   };
 
+  const handleEditPress = (e) => {
+    // Stop event propagation to prevent drag logic
+    e.stopPropagation();
+    if (onPress) {
+      onPress(event);
+    }
+  };
+
   const formatEventTime = (startDateTime, endDateTime, isAllDay) => {
     if (isAllDay) return 'All day';
     
@@ -107,7 +115,13 @@ const DraggableEventChip = ({
         </View>
         
         {canBeMoved && showEditIcon && (
-          <MaterialIcons name="edit" size={20} color="#ffffff" style={styles.editIcon} />
+          <Pressable 
+            onPress={handleEditPress}
+            style={styles.editIconContainer}
+            hitSlop={10}
+          >
+            <MaterialIcons name="edit" size={20} color="#ffffff" style={styles.editIcon} />
+          </Pressable>
         )}
       </Pressable>
     );
@@ -215,6 +229,11 @@ const styles = StyleSheet.create({
   editIcon: {
     marginLeft: 10,
     opacity: 0.8,
+  },
+  editIconContainer: {
+    padding: 5,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 });
 

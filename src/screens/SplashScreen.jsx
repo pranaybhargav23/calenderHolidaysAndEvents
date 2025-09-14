@@ -10,8 +10,7 @@ useEffect(()=>{
 },[])
   return (
     <View style={styles.container}>
-      
-       <LottieView source={require('../assets/animations/booked.json')} autoPlay loop style={{ width: 200, height: 200 }} />
+      <LottieView source={require('../assets/animations/booked.json')} autoPlay loop style={{ width: 200, height: 200 }} />
     </View>
   );
 };
